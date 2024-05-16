@@ -1,0 +1,415 @@
+#:kivy 2.3.0
+
+<Source>:
+    size: 70, 70 
+    background_disabled_normal: ''
+    background_color: 0, 0, 0, 0
+    canvas.before:
+        Color:
+            rgba: (0.75, 0.75, 0.75, 1) if self.state=='normal' else (0, 0.7, 0.7, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [50,]
+
+<Slider>:
+    min: 1
+    max: 1000
+    step: 1
+    orientation: 'horizontal'
+
+<Photon>:
+    size: 20, 20
+    canvas:
+        Color:
+            rgba: 0.96, 0.90, 0.32, 1
+        Ellipse:
+            pos: self.pos
+            size: self.size
+
+<Filter>:
+    size: 200, 200
+    canvas:
+        Color:
+            rgba: 0.75, 0.75, 0.75, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<Slit>:
+    size: 170, 5
+    canvas.before:                 
+        PushMatrix
+        Rotate:         
+            angle: self.angle              
+            origin: self.center
+    canvas: 
+        Color:
+            rgba: 0, 0, 0, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    canvas.after:
+        PopMatrix
+
+<Button>:
+    size: 50, 50
+    background_disabled_normal: ''
+    background_color: 0, 0, 0, 0
+    canvas.before:
+        Color:
+            rgba: (0.75, 0.75, 0.75, 1) if self.state=='normal' else (0, 0.7, 0.7, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [50,]
+
+<Button_Switch>:
+    size: 50, 50
+    background_disabled_normal: ''
+    background_color: 0, 0, 0, 0
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+
+<Angle>:
+    color: 0, 0, 0, 1
+    font_size: 35 
+
+<Switch>:
+    size: 110, 40 
+    canvas:
+        Color:
+            rgba: 0.75, 0.75, 0.75, 1
+
+
+<E91Simulation>:
+
+    photon_alice: photon_alice
+    photon_bob: photon_bob
+
+    alice_filter: alice_filter
+    bob_filter: bob_filter
+    eve_left_filter: eve_left_filter
+    eve_right_filter: eve_right_filter
+
+    alice_slit: alice_slit
+    bob_slit: bob_slit
+    eve_left_slit: eve_left_slit
+    eve_right_slit: eve_right_slit
+
+    switch_eve: switch_eve
+    switch_eve_left: switch_eve_left
+    switch_eve_right: switch_eve_right
+    switch_expert_mode: switch_expert_mode
+
+    source: source
+    slider: slider
+
+
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1 
+        Rectangle:
+            pos: self.pos
+            size: self.size  
+
+
+    Button_Switch:
+        id: switch_eve 
+        size: 100 * root.width / 1920, 30 * root.width / 1920
+        rgba: (0.75, 0.75, 0.75, 1) if root.switch_eve.active else (0, 0.7, 0.7, 1)
+        center: root.center_x, root.center_y + 230 * root.width / 1920
+        on_press: root.change_mode_switch_eve()
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 20 * root.width / 1920 
+            center: root.center_x, root.center_y + 230 * root.width / 1920
+            text: "On" if root.switch_eve.active else "Off"
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 37 * root.width / 1920 
+            center: root.center_x, root.switch_eve.top + 30 * root.width / 1920
+            text: "Eavesdropping"
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 70 * root.width / 1920 
+            center: root.center_x, root.center_y - 350 * root.width / 1920
+            text: "Eve" if root.switch_eve.active else ''
+
+    Button_Switch:
+        id: switch_eve_left
+        size: 100 * root.width / 1920, 30 * root.width / 1920
+        opacity: 1 if switch_eve.active else 0
+        center: root.eve_left_filter.center_x, root.eve_left_filter.top + switch_eve_left.height / 2
+        # active: True if switch_eve.active else False
+        on_press: root.change_mode_switch_eve_left()
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 20 * root.width / 1920 
+            center: root.eve_left_filter.center_x, root.eve_left_filter.top + switch_eve_left.height / 2
+            text: "On" if root.switch_eve_left.active else "Off"
+
+    Button_Switch:
+        id: switch_eve_right
+        size: 100 * root.width / 1920, 30 * root.width / 1920
+        opacity: 1 if switch_eve.active else 0
+        center: root.eve_right_filter.center_x, root.eve_right_filter.top + switch_eve_right.height / 2
+        # active: True if switch_eve.active else False
+        on_press: root.change_mode_switch_eve_right()
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 20 * root.width / 1920 
+            center: root.eve_right_filter.center_x, root.eve_right_filter.top + switch_eve_right.height / 2
+            text: "On" if root.switch_eve_right.active else "Off"
+
+        
+
+    Button_Switch: 
+        id: switch_expert_mode
+        size: 100 * root.width / 1920, 30 * root.width / 1920
+        center: alice_filter.center_x, alice_filter.center_y + 420 * root.width / 1920
+        on_press: root.change_mode_switch_expert()
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 20 * root.width / 1920 
+            center: alice_filter.center_x, alice_filter.center_y + 420 * root.width / 1920
+            text: "On" if root.switch_expert_mode.active else "Off"
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 30 * root.width / 1920  
+            center: root.switch_expert_mode.center_x, root.switch_expert_mode.center_y + 35 * root.width / 1920
+            text: "Expert Mode"
+
+        Label:
+            id: label_E_a1b1
+            color: 0, 0, 0, 1
+            opacity: 1 if switch_expert_mode.active else 0
+            font_size: 30 * root.width / 1920  
+            center: alice_filter.center_x + alice_filter.width / 2 + self.width / 2, switch_expert_mode.center_y
+            text: "E(a1,b1) = " + str(root.E_a1b1)
+
+            
+
+        Label:
+            id: label_E_a1b3
+            color: 0, 0, 0, 1
+            opacity: 1 if switch_expert_mode.active else 0
+            font_size: 30 * root.width / 1920  
+            center: (alice_filter.center_x + alice_filter.width / 2 + self.width / 2) + (bob_filter.center_x - alice_filter.width / 2)/5 , switch_expert_mode.center_y
+            text: "E(a1,b3) = " + str(root.E_a1b3)
+
+        Label:
+            id: label_E_a13b1
+            color: 0, 0, 0, 1
+            opacity: 1 if switch_expert_mode.active else 0
+            font_size: 30 * root.width / 1920  
+            center: (alice_filter.center_x + alice_filter.width / 2 + self.width / 2) + 2 * (bob_filter.center_x - alice_filter.width / 2)/5 , switch_expert_mode.center_y
+            text: "E(a3,b1) = " + str(root.E_a3b1)
+
+        Label:
+            id: label_E_a3b3
+            color: 0, 0, 0, 1
+            opacity: 1 if switch_expert_mode.active else 0
+            font_size: 30 * root.width / 1920  
+            center: (alice_filter.center_x + alice_filter.width / 2 + self.width / 2) + 3 * (bob_filter.center_x - alice_filter.width / 2)/5, switch_expert_mode.center_y
+            text: "E(a3,b3) = " + str(root.E_a3b3)
+
+        Label:
+            color: 0, 0, 0, 1
+            opacity: 1 if switch_expert_mode.active else 0
+            font_size: 30 * root.width / 1920  
+            center: (alice_filter.center_x + alice_filter.width / 2 + self.width / 2) + 4 * (bob_filter.center_x - alice_filter.width / 2)/5 , switch_expert_mode.center_y
+            text: "S = " + str(root.S)
+
+
+    Filter:
+        id: alice_filter
+        size: 300 * root.width / 1920, 300 * root.width / 1920
+        center: 0.75 * self.width, root.center_y
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 70 * root.width / 1920 
+            center: alice_filter.center_x, alice_filter.center_y - 350 * root.width / 1920
+            text: "Alice" 
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 70 * root.width / 1920 
+            center: alice_filter.center_x, alice_filter.top + 120 * root.width / 1920
+            text: str(root.a_bit)
+
+    Filter:
+        id: bob_filter
+        size: 300 * root.width / 1920, 300 * root.width / 1920
+        center: root.width - 0.75 * self.width, root.center_y 
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 70 * root.width / 1920 
+            center: bob_filter.center_x, bob_filter.center_y - 350 * root.width / 1920
+            text: "Bob"
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 70 * root.width / 1920 
+            center: bob_filter.center_x, bob_filter.top + 120 * root.width / 1920
+            text: str(root.b_bit)
+
+    Filter:
+        id: eve_left_filter
+        size: 300 * root.width / 1920, 300 * root.width / 1920
+        opacity: 1 if switch_eve.active and switch_eve_left.active else 0
+        center: (root.alice_filter.center_x + root.center_x) / 2 + 25, root.center_y
+
+        Label:
+            color: 0, 0, 0, 1
+            opacity: 1 if switch_eve.active and switch_eve_left.active else 0
+            font_size: 70 * root.width / 1920 
+            center: eve_left_filter.center_x, eve_left_filter.top + 120 * root.width / 1920
+            text: str(root.e_left_bit)
+
+    Filter:
+        id: eve_right_filter
+        size: 300 * root.width / 1920, 300 * root.width / 1920
+        opacity: 1 if switch_eve.active and switch_eve_right.active else 0
+        center: (root.bob_filter.center_x + root.center_x) / 2 - 25, root.center_y
+
+        Label:
+            color: 0, 0, 0, 1
+            opacity: 1 if switch_eve.active and switch_eve_right.active else 0
+            font_size: 70 * root.width / 1920 
+            center: eve_right_filter.center_x, eve_right_filter.top + 120 * root.width / 1920
+            text: str(root.e_right_bit)
+
+
+    Slit:
+        id: alice_slit
+        size: 0.85 * root.alice_filter.width, root.alice_filter.height / 45
+        center: root.alice_filter.center_x, root.center_y 
+
+    Slit:
+        id: bob_slit
+        size: 0.85 * root.bob_filter.width, root.bob_filter.height / 45
+        center: root.bob_filter.center_x, root.center_y
+
+    Slit:
+        id: eve_left_slit
+        size: 0.85 * root.eve_left_filter.width, root.eve_left_filter.height / 45
+        opacity: 1 if switch_eve.active and switch_eve_left.active else 0
+        center: root.eve_left_filter.center_x, root.center_y
+
+    Slit:
+        id: eve_right_slit
+        size: 0.85 * root.eve_right_filter.width, root.eve_right_filter.height / 45
+        opacity: 1 if switch_eve.active and switch_eve_right.active else 0
+        center: root.eve_right_filter.center_x, root.center_y
+
+    
+    Button:
+        id: alice_button
+        size: 60 * root.width / 1920, 60 * root.width / 1920
+        center: root.alice_filter.center_x + root.alice_filter.width / 2 - 30 * self.width / 50, root.center_y - root.alice_filter.width / 2 - 60 * self.height / 50
+        on_press: root.change_alice_angle()
+
+        Angle:
+            id: alice_angle
+            font_size: 60 * root.width / 1920
+            center: root.alice_filter.center_x - 25 * root.width / 1920, root.center_y - root.alice_filter.width / 2 - 60 * alice_button.height / 50
+            text: str(root.alice_slit.angle) + " º"
+
+    Button:
+        id: bob_button
+        size: 60 * root.width / 1920, 60 * root.width / 1920
+        center: root.bob_filter.center_x + root.bob_filter.width / 2 - 30 * self.width / 50, root.center_y - root.bob_filter.width / 2 - 60  * self.height / 50
+        on_press: root.change_bob_angle()
+
+        Angle:
+            id: bob_angle
+            font_size: 60 * root.width / 1920
+            center: root.bob_filter.center_x - 25 * root.width / 1920, root.center_y - root.alice_filter.width / 2 - 60 * bob_button.height / 50
+            text: str(root.bob_slit.angle) + " º"
+
+    Button:
+        id: eve_left_button
+        size: 60 * root.width / 1920, 60 * root.width / 1920
+        opacity: 1 if switch_eve.active and switch_eve_left.active else 0
+        center: root.eve_left_filter.center_x + root.eve_left_filter.width / 2 - 30 * self.width / 50, root.center_y - root.eve_left_filter.width / 2 - 60  * self.height / 50
+        on_press: root.change_e_left_angle()
+
+        Angle:
+            id: eve_left_angle
+            font_size: 60 * root.width / 1920
+            opacity: 1 if switch_eve.active and switch_eve_left.active else 0
+            center: root.eve_left_filter.center_x - 25 * root.width / 1920, root.center_y - root.alice_filter.width / 2 - 60 * eve_left_button.height / 50
+            text: str(root.eve_left_slit.angle) + " º"
+
+    Button:
+        id: eve_right_button
+        size: 60 * root.width / 1920, 60 * root.width / 1920
+        opacity: 1 if switch_eve.active and switch_eve_right.active else 0
+        center: root.eve_right_filter.center_x + root.eve_right_filter.width / 2 - 30 * self.width / 50, root.center_y - root.eve_right_filter.width / 2 - 60  * self.height / 50
+        on_press: root.change_e_right_angle()
+
+        Angle:
+            id: eve_right_angle
+            font_size: 60 * root.width / 1920
+            opacity: 1 if switch_eve.active and switch_eve_right.active else 0
+            center: root.eve_right_filter.center_x - 25 * root.width / 1920, root.center_y - root.alice_filter.width / 2 - 60 * eve_right_button.height / 50
+            text: str(root.eve_right_slit.angle) + " º"
+
+
+    Photon:
+        id: photon_alice
+        size: 20 * root.width / 1920, 20 * root.width / 1920
+        center: self.parent.center_x, root.center_y
+
+    Photon:
+        id: photon_bob
+        size: 20 * root.width / 1920, 20 * root.width / 1920
+        center: self.parent.center_x, root.center_y
+
+
+    Source:
+        id: source
+        size: 70 * root.width / 1920, 70 * root.width / 1920
+        center: self.parent.center
+        on_press: root.emission()
+
+        # CHANGE - Must disappear after first use
+        Label:
+            color: 0.2, 0.2, 0.8, 1
+            #opacity: 0 if source.on_press() else 1
+            font_size: 22 * root.width / 1920
+            center: root.center_x, root.source.top + 30
+            text: "Press me!"
+
+        Label:
+            id: label_source 
+            color: 0, 0, 0, 1
+            font_size: 45 * root.width / 1920 
+            center: source.center_x, source.center_y - 70 * root.width / 1920
+            text: "Source"
+
+
+    Slider:
+        id: slider
+        size: 170 * root.width / 1920, 40 * root.width / 1920
+        cursor_size: (25 * root.width / 1920, 25 * root.width / 1920)
+        center: self.parent.center_x, label_source.center_y - 30 * root.width / 1920
+
+        Label:
+            color: 0, 0, 0, 1
+            font_size: 14
+            center: root.slider.center_x, root.slider.center_y - 20
+            text: str(int(slider.value))
